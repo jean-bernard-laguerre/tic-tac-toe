@@ -1,3 +1,6 @@
+from ia import *
+from outils import *
+
 def affichage(plateau):
 
     for x in range(len(plateau)):
@@ -11,52 +14,32 @@ def affichage(plateau):
                 case _:
                     print("   ", end="")
                 
-
         print("")
+    print("")
 
-def testCase(case, plateau):
+def tour(joueur, plateau, mode):
 
-    if plateau[case//len(plateau)][case%len(plateau)] == 0:
-        return True
+    if mode == "ia":
+        j = ia(plateau, joueur)
+        print("IA",joueur,": ",j)
+    else :
+        while True:
 
-    return False
-
-def testVictoire(case,p):
-
-    ligne = (p[case//len(p)][0] == p[case//len(p)][1] == p[case//len(p)][2])
-    diagonale1 = (p[0][0] == p[1][1] == p[2][2] != 0)
-    diagonale2 = (p[0][2] == p[1][1] == p[2][0] != 0)
-
-    if  ligne or diagonale1 or diagonale2:
-        return True
-    return False
-
-def testNul(plateau):
-
-    for x in range(len(plateau)):
-        for y in range(len(plateau)):
-            if plateau[x][y] == 0:
-                return False
-    return True
-
-def tour(joueur, plateau):
-
-    while True:
-
-        j = int(input("Joueur " + str(joueur) + ": "))
-        if 0 <= j <= 8 and testCase(j,plateau):
-            break
-        print("invalide")
+            j = int(input("Joueur " + str(joueur) + ": "))
+            if 0 <= j <= 8 and testCase(j,plateau):
+                break
+            print("invalide")
+    
     
     plateau[j//len(plateau)][j%len(plateau)] = joueur
 
     affichage(plateau)
 
-    if testVictoire(j,plateau):
+    if victoire(j,plateau):
         print("Joueur " + str(joueur) + " a gagné!")
         return False
 
-    if testNul(plateau):
+    if nul(plateau):
         print("Match Nul.")
         return False
 
@@ -65,12 +48,14 @@ def tour(joueur, plateau):
 def main():
 
     plateau = [[0,0,0],[0,0,0],[0,0,0]]
+    mode1 = ""
+    mode2 = "ia"
 
     while True:
 
-        if not (tour(1, plateau)):
+        if not (tour(1, plateau, mode1)):
             break
-        if not (tour(2, plateau)):
+        if not (tour(2, plateau, mode2)):
             break
 
 main()

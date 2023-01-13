@@ -32,12 +32,11 @@ def tour(signe, plateau, joueur, niveau, score):
                 j = random.choice(mauvaisChoix)
             else:
                 j = random.choice(caseLibre)
-            
-            print("IA",signe,": ",j)
-            
+              
         else:
             j = meilleurChoix
-            print("IA",signe,": ",j)
+
+        print(joueur["Nom"],": ",j)
         
     else :
         while True:
@@ -92,7 +91,7 @@ def main():
         while True:
 
             try:
-                
+
                 joueurs[i]["mode"] = int(input("Joueur%s: Manuel(0) ou Auto(1) ? " % (i+1)))
 
                 if joueurs[i]["mode"] == 1:
@@ -117,7 +116,7 @@ def main():
             break
 
         
-    f = open("scores.txt", "a")
+    f = open("historique.txt", "a")
     f.write(f"Match nul : {score[0]}  |  {joueurs[0]['Nom']} : {score[1]} | {score[2]} : {joueurs[1]['Nom']}\n")
     f.close()
 

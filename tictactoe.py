@@ -17,14 +17,14 @@ def affichage(plateau):
         print("")
     print("")
 
-def tour(joueur, plateau, mode, niveau, score):
+def tour(signe, plateau, joueur, niveau, score):
 
     caseLibre = caseRestante(plateau)
 
-    meilleurChoix = ia(plateau, joueur)
+    meilleurChoix = ia(plateau, signe)
     mauvaisChoix = [case for case in caseLibre if case != meilleurChoix]
 
-    if mode == 1:
+    if joueur["mode"] == 1:
 
         if random.randint(1,10) > niveau:
 
@@ -33,17 +33,17 @@ def tour(joueur, plateau, mode, niveau, score):
             else:
                 j = random.choice(caseLibre)
             
-            print("IA",joueur,": ",j)
+            print("IA",signe,": ",j)
             
         else:
             j = meilleurChoix
-            print("IA",joueur,": ",j)
+            print("IA",signe,": ",j)
         
     else :
         while True:
             
             try:
-                j = int(input("Joueur " + str(joueur) + ": "))
+                j = int(input(joueur["Nom"] + ": "))
 
                 if 0 <= j <= 8 and testCase(j,plateau):
                     break
@@ -52,13 +52,13 @@ def tour(joueur, plateau, mode, niveau, score):
                 print("chiffres entre 0 et 8.")
     
     
-    plateau[j//3][j%3] = joueur
+    plateau[j//3][j%3] = signe
 
     affichage(plateau)
 
     if victoire(j,plateau):
-        print("Joueur " + str(joueur) + " a gagné!\n")
-        score[joueur] += 1
+        print(joueur["Nom"]+ " a gagné!\n")
+        score[signe] += 1
         return False
 
     if nul(plateau):
@@ -68,21 +68,22 @@ def tour(joueur, plateau, mode, niveau, score):
 
     return True
 
-def partie(mode, niveauIA, score):
+def partie(joueurs, niveauIA, score):
 
     plateau = [[0,0,0],[0,0,0],[0,0,0]]
 
     while True:
 
-        if not (tour(1, plateau, mode[0], niveauIA[0], score)):
+        if not (tour(1, plateau, joueurs[0], niveauIA[0], score)):
             break
-        if not (tour(2, plateau, mode[1], niveauIA[1], score)):
+        if not (tour(2, plateau, joueurs[1], niveauIA[1], score)):
             break
 
+    print(f"Match nul : {score[0]}  |  {joueurs[0]['Nom']} : {score[1]} | {score[2]} : {joueurs[1]['Nom']}\n")
 
 def main():
 
-    mode = [0,0]
+    joueurs = [{"mode" : 0, "Nom" : ""} , {"mode" : 0, "Nom" : ""}]
     niveauIA = [0,0]
     score = [0,0,0]
 
@@ -91,13 +92,17 @@ def main():
         while True:
 
             try:
-                mode[i] = int(input("Joueur%s: Manuel(0) ou Auto(1) ? " % (i+1)))
-
-                if mode[i] == 1:
                 
-                    niveauIA[i] = int(input("Niveau IA 0(Facile) à 10(Difficile) ? "))
+                joueurs[i]["mode"] = int(input("Joueur%s: Manuel(0) ou Auto(1) ? " % (i+1)))
 
-                if mode[i] == 0 or mode[i] == 1 and 0 <= niveauIA[i] <= 10:
+                if joueurs[i]["mode"] == 1:
+                    niveauIA[i] = int(input("Niveau IA 0(Facile) à 10(Difficile) ? "))
+                    joueurs[i]["Nom"] = f"IA{niveauIA[i]}-{i+1}"
+
+                else:
+                    joueurs[i]["Nom"] = input("Nom : ")
+
+                if joueurs[i]["mode"] == 0 or joueurs[i]["mode"] == 1 and 0 <= niveauIA[i] <= 10:
                     break
 
             except:
@@ -105,9 +110,7 @@ def main():
     
     while True:
 
-        partie(mode, niveauIA, score)
-
-        print("Match nul : %s  |  Joueur1 : %s | %s : Joueur2\n" % (score[0],score[1],score[2]))
+        partie(joueurs, niveauIA, score)
 
         rejouer = input("Rejouer ? oui(0): ")
         if rejouer != "0":
@@ -115,7 +118,7 @@ def main():
 
         
     f = open("scores.txt", "a")
-    f.write("Match nul : %s  |  Joueur1 : %s | %s : Joueur2\n" % (score[0],score[1],score[2]))
+    f.write(f"Match nul : {score[0]}  |  {joueurs[0]['Nom']} : {score[1]} | {score[2]} : {joueurs[1]['Nom']}\n")
     f.close()
 
 main()

@@ -3,6 +3,8 @@ import random
 
 def ia(board, signe):
     
+    caseLibre = caseRestante(board)
+    coinsLibre = []
     coups = []
     i = 0
 
@@ -10,20 +12,21 @@ def ia(board, signe):
         return 4
         
     while i < 2:
-        for x in range(9):
+        for x in caseLibre:
 
-            if(testCase(x,board)):
+            board[x//3][x%3] = signe
 
-                board[x//len(board)][x%len(board)] = signe
+            if victoire(x,board):
+                board[x//3][x%3] = 0
+                return x
 
-                if victoire(x,board):
-                    board[x//len(board)][x%len(board)] = 0
-                    return x
+            if i == 0 and testCoup(x, board, signe):
+                coups += [x]
 
-                if i == 0 and testCoup(x, board, signe):
-                    coups += [x]
+            if x in coins:
+                coinsLibre += [x]
 
-                board[x//len(board)][x%len(board)] = 0
+            board[x//3][x%3] = 0
 
         if signe == 1:
             signe = 2
@@ -31,30 +34,29 @@ def ia(board, signe):
             signe = 1
 
         i+=1
-        
+      
 
     if len(coups) > 0:
-        print("coups:",coups)
         return random.choice(coups)
+    
+    if len(coinsLibre) > 0:
+        return random.choice(coinsLibre)
 
-    while True:
-        
-        emplacement  = random.randint(0,8)
-        if testCase(emplacement, board):
-            break
-
-    return emplacement
+    return random.choice(caseLibre)
 
 def testCoup(c, p, signe):
+
     ligne = [ p[c//3][0], p[c//3][1], p[c//3][2] ]
     colonne = [ p[0][c%3], p[1][c%3], p[2][c%3] ]
-    coins = [0,2,6,8]
 
     match signe:
+        
         case 1:
             if(2 in ligne or 2 in colonne) or c not in coins:
                 return False
+                
         case 2:
             if(1 in ligne or 1 in colonne) or c not in coins:
                 return False
+
     return True

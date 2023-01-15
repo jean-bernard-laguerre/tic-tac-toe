@@ -8,14 +8,17 @@ def ia(board, signe):
     coups = []
     i = 0
 
+    # Jouer la case du milieu en priorité
     if testCase(4,board):
         return 4
-        
+    
+    #Cherche les coups gagnants de L'IA puis ceux de l'adversaire
     while i < 2:
         for x in caseLibre:
 
             board[x//3][x%3] = signe
-
+            
+            #Si le coup est gagnant on le joue directement
             if victoire(x,board):
                 board[x//3][x%3] = 0
                 return x
@@ -28,6 +31,7 @@ def ia(board, signe):
 
             board[x//3][x%3] = 0
 
+        #Passe au signe de l'adversaire
         if signe == 1:
             signe = 2
         else:
@@ -35,13 +39,15 @@ def ia(board, signe):
 
         i+=1
       
-
+    #choisis un coup au hasard parmis les meilleur coups trouvé
     if len(coups) > 0:
         return random.choice(coups)
+
     
     if len(coinsLibre) > 0:
         return random.choice(coinsLibre)
 
+    #Si aucune option est trouvé jouer une case au hasard
     return random.choice(caseLibre)
 
 def testCoup(c, p, signe):

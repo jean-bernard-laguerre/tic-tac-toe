@@ -1,6 +1,7 @@
 from ia import *
 from outils import *
 
+
 def affichage(plateau):
 
     for x in range(3):
@@ -17,6 +18,7 @@ def affichage(plateau):
         print("")
     print("")
 
+
 def tour(signe, plateau, joueur, niveau, score):
 
     caseLibre = caseRestante(plateau)
@@ -26,6 +28,7 @@ def tour(signe, plateau, joueur, niveau, score):
 
     if joueur["mode"] == 1:
 
+        #En fonction du niveau choisi l'ia a une chance plus ou moins élevée de se tromper
         if random.randint(1,10) > niveau:
 
             if mauvaisChoix:
@@ -36,13 +39,13 @@ def tour(signe, plateau, joueur, niveau, score):
         else:
             j = meilleurChoix
 
-        print(joueur["Nom"],": ",j)
+        print(f"{joueur['Nom']}: {j}")
         
     else :
         while True:
             
             try:
-                j = int(input(joueur["Nom"] + ": "))
+                j = int(input(f"{joueur['Nom']}: "))
 
                 if 0 <= j <= 8 and testCase(j,plateau):
                     break
@@ -55,11 +58,13 @@ def tour(signe, plateau, joueur, niveau, score):
 
     affichage(plateau)
 
+    #Après que le tour sois joué on verifie si le coup est gagnant
     if victoire(j,plateau):
-        print(joueur["Nom"]+ " a gagné!\n")
+        print(f"{joueur['Nom']} a gagné!\n")
         score[signe] += 1
         return False
 
+    #Ou s'il y a match nul
     if nul(plateau):
         print("Match Nul.\n")
         score[0] += 1
@@ -67,18 +72,20 @@ def tour(signe, plateau, joueur, niveau, score):
 
     return True
 
+
 def partie(joueurs, niveauIA, score):
 
     plateau = [[0,0,0],[0,0,0],[0,0,0]]
 
     while True:
-
+        #La fonction tour retourne False si la partie est terminée
         if not (tour(1, plateau, joueurs[0], niveauIA[0], score)):
             break
         if not (tour(2, plateau, joueurs[1], niveauIA[1], score)):
             break
 
     print(f"Match nul : {score[0]}  |  {joueurs[0]['Nom']} : {score[1]} | {score[2]} : {joueurs[1]['Nom']}\n")
+
 
 def main():
 
@@ -87,15 +94,16 @@ def main():
     score = [0,0,0]
 
     for i in range(2):
-
+        #Menu Joueur
         while True:
 
             try:
 
-                joueurs[i]["mode"] = int(input("Joueur%s: Manuel(0) ou Auto(1) ? " % (i+1)))
+                joueurs[i]["mode"] = int(input(f"Joueur{i+1}: Manuel(0) ou Auto(1) ? "))
 
                 if joueurs[i]["mode"] == 1:
                     niveauIA[i] = int(input("Niveau IA 0(Facile) à 10(Difficile) ? "))
+                    
                     joueurs[i]["Nom"] = f"IA{niveauIA[i]}-{i+1}"
 
                 else:
@@ -105,7 +113,7 @@ def main():
                     break
 
             except:
-                print("input invalide, chiffre seulement.")
+                print("input invalide, chiffre uniquement.")
     
     while True:
 
@@ -115,7 +123,7 @@ def main():
         if rejouer != "0":
             break
 
-        
+    #Ecriture des scores dans un fichier texte
     f = open("historique.txt", "a")
     f.write(f"Match nul : {score[0]}  |  {joueurs[0]['Nom']} : {score[1]} | {score[2]} : {joueurs[1]['Nom']}\n")
     f.close()
